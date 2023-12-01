@@ -1,7 +1,7 @@
 require("dotenv").config();
-
-const isMainnet = process.argv[2] == "mainnet";
-
+import TokenProps from "./types/TokenProps";
+// const isMainnet = process.argv[2] == "mainnet";
+const isMainnet = 1;
 const chainId = isMainnet ? 1 : 5;
 
 const privateKey = isMainnet
@@ -35,6 +35,23 @@ const uniswapV2FactoryAddress = isMainnet
 const gasBribe = process.env.GAS_BRIBE_IN_GWEI;
 const buyAmount = process.env.BUY_AMOUNT_IN_WEI;
 
+const Tokenlist: TokenProps[] = [
+  {
+    address: "0x2D9D7c64F6c00e16C28595ec4EbE4065ef3A250b",
+    name: "GHY",
+    decimal: 9,
+    isTax: true,
+    isStable: true
+  },
+  {
+    address: "0x2388821b40F3Ab780F09e97b42b7b577d37A6d5E",
+    name: "Grok X",
+    decimal: 18,
+    isTax: true,
+    isStable: true
+  }
+]
+
 export {
   isMainnet,
   chainId,
@@ -47,4 +64,5 @@ export {
   uniswapV2RouterAddress,
   gasBribe,
   buyAmount,
+  Tokenlist,
 };

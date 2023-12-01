@@ -16,8 +16,9 @@ const handleTransaction = async (txHash: string) => {
   try {
     const targetTransaction = await provider.getTransaction(txHash);
     const decoded = await decodeTransaction(targetTransaction);
-    const sandwich = await sandwichTransaction(decoded);
-    if (sandwich) console.log("Sandwich successful!");
+    // const sandwich = await sandwichTransaction(decoded);
+    // if (sandwich) console.log("Sandwich successful!");
+    console.log("decoded", decoded)
   } catch (error) {
     console.log(error);
   }
