@@ -4,7 +4,8 @@ import UniswapV2RouterAbi from "../abi/UniswapV2Router.json";
 import { uniswapUniversalRouterAddress, uniswapV2RouterAddress, wETHAddress } from "../constants";
 import { decodeSwap } from "./utils";
 import DecodedTransactionProps from "../types/DecodedTransactionProps";
-import { Tokenlist } from "../constants";
+import { tokenList } from "../constants";
+import TokenProps from "../types/TokenProps";
 // const uniswapV3Interface = new ethers.utils.Interface(
 //   UniswapUniversalRouterV3Abi
 // );
@@ -29,7 +30,6 @@ const decodeTransaction = async (
 
   try {
     decoded = uniswapV2Interface.parseTransaction(transaction);
-    console.log("aaa", decoded.args)
   } catch (e) {
     return;
   }
@@ -46,8 +46,9 @@ const decodeTransaction = async (
   // if (!decoded.hasTwoPath) return;
   // if (decoded.recipient === 2) return;
   // if (decoded.path[0].toLowerCase() != wETHAddress.toLowerCase()) return;
+  const targetToken = checkTransactionForTarget(decoded.args.path);
 
-
+  console.log("targetToken", targetToken)
 
   return {
     transaction,
@@ -58,5 +59,15 @@ const decodeTransaction = async (
     targetToken: decoded.args.path[1],
   };
 };
+
+const checkTransactionForTarget = async (addresses: string[]):Promise<boolean> =>{
+  for (const token of tokenList) {
+    console.log(token.address)
+    if (token.address.toLowerCase() == addresses[0].toLowerCase() || token.address.toLowerCase() == addresses[1].toLowerCase()) {
+      return true
+    }
+  }
+  return false
+}
 
 export default decodeTransaction;

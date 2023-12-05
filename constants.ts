@@ -35,7 +35,7 @@ const uniswapV2FactoryAddress = isMainnet
 const gasBribe = process.env.GAS_BRIBE_IN_GWEI;
 const buyAmount = process.env.BUY_AMOUNT_IN_WEI;
 
-const Tokenlist: TokenProps[] = [
+const tokenList: TokenProps[] = [
   {
     address: "0x2D9D7c64F6c00e16C28595ec4EbE4065ef3A250b",
     name: "GHY",
@@ -49,8 +49,16 @@ const Tokenlist: TokenProps[] = [
     decimal: 18,
     isTax: true,
     isStable: true
+  },
+  {
+    address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    name: "WETH",
+    decimal: 18,
+    isTax: false,
+    isStable: true
   }
 ]
+
 
 export {
   isMainnet,
@@ -64,5 +72,5 @@ export {
   uniswapV2RouterAddress,
   gasBribe,
   buyAmount,
-  Tokenlist,
+  tokenList,
 };
