@@ -11,6 +11,7 @@ import {
   privateKey,
   uniswapV2RouterAddress,
   wETHAddress,
+  gasLimit
 } from "../constants";
 import DecodedTransactionProps from "../types/DecodedTransactionProps";
 import PairProps from "../types/PairProps";
@@ -76,7 +77,6 @@ const decodeSwap = async (input: string) => {
     hasTwoPath,
   };
 };
-
 const getAmountOut = (
   amountIn: BigNumber,
   reserveIn: BigNumber,
@@ -89,13 +89,26 @@ const getAmountOut = (
   return amountOut;
 };
 
+const getAmountOutTaxToken = (
+  buyTax: number,
+  amountIn: BigNumber,
+  reserveIn: BigNumber,
+  reserveOut: BigNumber
+) => {
+  const amountInWithFee = amountIn.mul(997); // Uniswap fee of 0.3%
+  const numerator = amountInWithFee.mul(reserveOut);
+  const denominator = reserveIn.mul(1000).add(amountInWithFee);
+  const amountOut = (numerator.div(denominator)).mul(10000 - buyTax).div(10000);
+  return amountOut;
+}
+
+
 const getAmounts = (
   decoded: DecodedTransactionProps,
   pairs: PairProps
 ): AmountsProps | undefined => {
   const { transaction, amountIn, minAmountOut } = decoded;
   const { token0, token1 } = pairs;
-  let isProfit:boolean
 
   const maxGasFee = transaction.maxFeePerGas
     ? transaction.maxFeePerGas.add(gasBribe ?? 0)
@@ -105,7 +118,7 @@ const getAmounts = (
     ? transaction.maxPriorityFeePerGas.add(gasBribe ?? 0)
     : BigNumber.from(gasBribe);
 
-  let firstAmountOut = getAmountOut(BigNumber.from(buyAmount), token0, token1);
+  let firstAmountOut = getAmountOut(BigNumber.from(amountIn), token0, token1);
   const updatedReserveA = token0.add(buyAmount!);
   const updatedReserveB = token1.add(firstAmountOut.mul(997).div(1000));
 
@@ -126,6 +139,12 @@ const getAmounts = (
     updatedReserveB2,
     updatedReserveA2
   );
+  
+  let wastedAmount = (maxGasFee.add(BigNumber.from(maxGasFee))).mul(2).add(amountIn)
+
+  let profitAmount = thirdAmountOut > wastedAmount ? thirdAmountOut.sub(wastedAmount) : wastedAmount.sub(thirdAmountOut)
+  
+  let isProfit = thirdAmountOut > wastedAmount
 
   return {
     maxGasFee,
@@ -133,6 +152,8 @@ const getAmounts = (
     firstAmountOut,
     secondBuyAmount,
     thirdAmountOut,
+    isProfit,
+    profitAmount
   };
 };
 

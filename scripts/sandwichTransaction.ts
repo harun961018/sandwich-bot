@@ -11,6 +11,7 @@ import {
   privateKey,
   wETHAddress,
   buyAmount,
+  gasLimit
 } from "../constants";
 import AmountsProps from "../types/AmountsProps";
 
@@ -27,7 +28,7 @@ const sandwichTransaction = async (
   if (!pairs) return false;
   const amounts = getAmounts(decoded, pairs);
   if (!amounts) return false;
-
+  if (!amounts.isProfit) return false;
   const flashbotsProvider = await FlashbotsBundleProvider.create(
     provider,
     signer
@@ -42,13 +43,13 @@ const sandwichTransaction = async (
   const t2 = secondTransaction(decoded.transaction);
 
   // 3. Approve UniswapV2Router to spend token
-  const t3 = await thirdTransaction(decoded, amounts);
+  // const t3 = await thirdTransaction(decoded, amounts);
 
   // 4. Swap tokens for ETH
   const t4 = await forthTransaction(decoded, amounts);
 
   // Sign sandwich transaction
-  const bundle = await signBundle([t1, t2, t3, t4], flashbotsProvider);
+  const bundle = await signBundle([t1, t2, t4], flashbotsProvider);
 
   // Finally try to get sandwich transaction included in block
   const result = await sendBundle(bundle, flashbotsProvider);
@@ -73,7 +74,7 @@ const firstTransaction = async (
       type: 2,
       maxFeePerGas: amounts.maxGasFee,
       maxPriorityFeePerGas: amounts.priorityFee,
-      gasLimit: 300000,
+      gasLimit: gasLimit,
     }
   );
 
@@ -130,7 +131,7 @@ const thirdTransaction = async (
         type: 2,
         maxFeePerGas: amounts.maxGasFee,
         maxPriorityFeePerGas: amounts.priorityFee,
-        gasLimit: 300000,
+        gasLimit: gasLimit,
       }
     ),
   };
@@ -158,7 +159,7 @@ const forthTransaction = async (
         type: 2,
         maxFeePerGas: amounts.maxGasFee,
         maxPriorityFeePerGas: amounts.priorityFee,
-        gasLimit: 300000,
+        gasLimit: gasLimit,
       }
     ),
   };
@@ -216,5 +217,6 @@ const sendBundle = async (
       return false;
     });
 };
+
 
 export default sandwichTransaction;

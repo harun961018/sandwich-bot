@@ -6,6 +6,8 @@ type AmountsProps = {
   firstAmountOut: BigNumber | undefined;
   secondBuyAmount: BigNumber | undefined;
   thirdAmountOut: BigNumber | undefined;
+  isProfit: boolean;
+  profitAmount: BigNumber | undefined;
 };
 
 export default AmountsProps;
