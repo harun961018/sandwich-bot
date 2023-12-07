@@ -95,6 +95,7 @@ const getAmounts = (
 ): AmountsProps | undefined => {
   const { transaction, amountIn, minAmountOut } = decoded;
   const { token0, token1 } = pairs;
+  let isProfit:boolean
 
   const maxGasFee = transaction.maxFeePerGas
     ? transaction.maxFeePerGas.add(gasBribe ?? 0)

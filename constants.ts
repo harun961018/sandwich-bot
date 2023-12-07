@@ -60,12 +60,6 @@ const tokenList: TokenProps[] = [
   }
 ]
 
-const pairList = {
-  {
-
-  }
-}
-
 
 export {
   isMainnet,
