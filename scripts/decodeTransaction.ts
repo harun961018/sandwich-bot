@@ -34,21 +34,9 @@ const decodeTransaction = async (
     return;
   }
 
-  
+  const result = checkTransactionForTarget(decoded.args.path);
 
-  // // Make sure it's a UniswapV2 swap
-  // if (!decoded.args.commands.includes("08")) return;
-  // let swapPositionInCommands =
-  //   decoded.args.commands.substring(2).indexOf("08") / 2;
-  // let inputPosition = decoded.args.inputs[swapPositionInCommands];
-  // decoded = await decodeSwap(decoded.args);
-  // if (!decoded) return;
-  // if (!decoded.hasTwoPath) return;
-  // if (decoded.recipient === 2) return;
-  // if (decoded.path[0].toLowerCase() != wETHAddress.toLowerCase()) return;
-  const targetToken = checkTransactionForTarget(decoded.args.path);
-
-  console.log("targetToken", targetToken)
+  console.log("targetToken", result)
 
   return {
     transaction,
@@ -62,12 +50,13 @@ const decodeTransaction = async (
 
 const checkTransactionForTarget = async (addresses: string[]):Promise<boolean> =>{
   for (const token of tokenList) {
-    console.log(token.address)
     if (token.address.toLowerCase() == addresses[0].toLowerCase() || token.address.toLowerCase() == addresses[1].toLowerCase()) {
       return true
     }
   }
   return false
 }
+
+// const checkProfitableTransaction = async ()
 
 export default decodeTransaction;

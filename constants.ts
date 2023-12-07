@@ -42,6 +42,7 @@ const tokenList: TokenProps[] = [
     decimal: 9,
     isTax: true,
     isStable: true
+    
   },
   {
     address: "0x2388821b40F3Ab780F09e97b42b7b577d37A6d5E",
@@ -58,6 +59,12 @@ const tokenList: TokenProps[] = [
     isStable: true
   }
 ]
+
+const pairList = {
+  {
+
+  }
+}
 
 
 export {

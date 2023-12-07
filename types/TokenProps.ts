@@ -6,6 +6,7 @@ type TokenProps = {
   decimal: number;
   isTax: boolean;
   isStable: boolean;
+  
 };
 
 export default TokenProps;
