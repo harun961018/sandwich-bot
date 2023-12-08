@@ -7,6 +7,7 @@ type TokenProps = {
   isTax: boolean;
   isStable: boolean;
   buyTax: number;
+  sellTax: number;
 };
 
 export default TokenProps;

@@ -31,7 +31,7 @@ const erc20Factory = new ethers.ContractFactory(
   signer
 );
 
-const getPair = async (token: string) => {
+const getPair = async (token: string ) => {
   const pairFactory = new ethers.ContractFactory(
     UniswapV2PairAbi,
     uniswapPairByteCode,
@@ -90,15 +90,28 @@ const getAmountOut = (
 };
 
 const getAmountOutTaxToken = (
-  buyTax: number,
+  isbuy: boolean,
+  tax: number,
   amountIn: BigNumber,
   reserveIn: BigNumber,
   reserveOut: BigNumber
 ) => {
-  const amountInWithFee = amountIn.mul(997); // Uniswap fee of 0.3%
-  const numerator = amountInWithFee.mul(reserveOut);
-  const denominator = reserveIn.mul(1000).add(amountInWithFee);
-  const amountOut = (numerator.div(denominator)).mul(10000 - buyTax).div(10000);
+  let amountInWithFee: BigNumber | undefined
+  if (isbuy) {
+    amountInWithFee = amountIn.mul(9970); // Uniswap fee of 0.3%
+  } else {
+    amountInWithFee = amountIn.mul(9970 -tax)
+  }
+  
+  const numerator = amountInWithFee?.mul(reserveOut);
+  const denominator = reserveIn.mul(10000).add(amountInWithFee);
+  let amountOut: BigNumber | undefined
+  if (isbuy) {
+    amountOut = (numerator.div(denominator)).mul(10000 - tax).div(10000);
+  } else {
+    amountOut = numerator.div(denominator)
+  }
+  
   return amountOut;
 }
 

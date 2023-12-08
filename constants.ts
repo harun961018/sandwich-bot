@@ -43,7 +43,8 @@ const tokenList: TokenProps[] = [
     decimal: 9,
     isTax: true,
     isStable: true,
-    buyTax:20   
+    buyTax:20,
+    sellTax: 20,   
   },
   {
     address: "0x2388821b40F3Ab780F09e97b42b7b577d37A6d5E",
@@ -52,6 +53,7 @@ const tokenList: TokenProps[] = [
     isTax: true,
     isStable: true,
     buyTax: 0,
+    sellTax:0,
   },
   {
     address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -60,6 +62,7 @@ const tokenList: TokenProps[] = [
     isTax: false,
     isStable: true,
     buyTax: 0,
+    sellTax: 0,
   }
 ]
 

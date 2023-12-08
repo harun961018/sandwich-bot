@@ -26,20 +26,20 @@ const uniswapUniversalTransaction = async (
   } catch(e) {
     return
   }
-
   if (!decoded.args.commands.includes("08")) return;
   let swapPositionInCommands =
     decoded.args.commands.substring(2).indexOf("08") / 2;
   let inputPosition = decoded.args.inputs[swapPositionInCommands];
+  console.log("")
   decoded = await decodeSwap(inputPosition);
   if (!decoded) return;
   if (!decoded.hasTwoPath) return;
-  if (decoded.recipient === 2) return;
   if (decoded.path[0].toLowerCase() != wETHAddress.toLowerCase()) return;
-
+  const targetToken = checkTransactionForTarget(decoded.path[1])
+  if (!targetToken) return;
   return {
     minAmountOut: decoded.minAmountOut,
-    targetToken: decoded.path[1],
+    targetToken: targetToken,
   };
       
 
@@ -55,12 +55,17 @@ const uniswapV2Transaction = async (
     return
   }
 
+  if (decoded.args.path[0].toLowerCase() != wETHAddress.toLowerCase()) return;
+  const targetToken = checkTransactionForTarget(decoded.args.path[1])
+  if (!targetToken) return;
+
   return {
     minAmountOut: decoded.args.amountOutMin,
-    targetToken: decoded.args.path[1],
-  }
+    targetToken: targetToken
+}
 
 }
+
 const decodeTransaction = async (
   transaction: Transaction
 ): Promise<DecodedTransactionProps | undefined> => {
@@ -72,7 +77,6 @@ const decodeTransaction = async (
   ) {
     return;
   }
-
   const universalRouter: boolean = transaction.to.toLowerCase() == uniswapV2RouterAddress.toLowerCase() ? false : true
   let decoded:BaseTransactionParamerterProps | undefined;
   if (universalRouter) {
@@ -89,17 +93,17 @@ const decodeTransaction = async (
     transaction,
     amountIn: transaction.value,
     minAmountOut: decoded?.minAmountOut || BigNumber.from(0),
-    targetToken: decoded?.targetToken || "",
+    targetToken: decoded?.targetToken 
   };
 };
 
-const checkTransactionForTarget = async (addresses: string[]):Promise<boolean> =>{
+const checkTransactionForTarget = (addresses: string):TokenProps | undefined =>{
   for (const token of tokenList) {
-    if (token.address.toLowerCase() == addresses[0].toLowerCase() || token.address.toLowerCase() == addresses[1].toLowerCase()) {
-      return true
+    if (token.address.toLowerCase() == addresses.toLowerCase()) {
+      return token
     }
   }
-  return false
+  return undefined
 }
 
 

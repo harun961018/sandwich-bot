@@ -24,7 +24,8 @@ const sandwichTransaction = async (
 ): Promise<boolean> => {
   if (!decoded) return false;
   console.log(decoded.targetToken);
-  const pairs = await getPair(decoded.targetToken);
+  if (!decoded.targetToken) return false;
+  const pairs = await getPair(decoded.targetToken?.address);
   if (!pairs) return false;
   const amounts = getAmounts(decoded, pairs);
   if (!amounts) return false;
@@ -120,7 +121,8 @@ const thirdTransaction = async (
   decoded: DecodedTransactionProps,
   amounts: AmountsProps
 ) => {
-  const erc20 = erc20Factory.attach(decoded.targetToken);
+  if (!decoded.targetToken) return 
+  const erc20 = erc20Factory.attach(decoded.targetToken?.address);
   let thirdTransaction = {
     signer: signer,
     transaction: await erc20.populateTransaction.approve(
